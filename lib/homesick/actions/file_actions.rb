@@ -16,7 +16,7 @@ module Homesick
 
       def rm_rf(dir)
         say_status "rm -rf #{dir}", '', :green
-        FileUtils.rm_r dir, force: true
+        FileUtils.rm_r dir, force: true unless options[:pretend]
       end
 
       def rm_link(target)
@@ -24,7 +24,7 @@ module Homesick
 
         if target.symlink?
           say_status :unlink, target.expand_path.to_s, :green
-          FileUtils.rm_rf target
+          FileUtils.rm_rf target unless options[:pretend]
         else
           say_status :conflict, "#{target} is not a symlink", :red
         end
@@ -32,12 +32,12 @@ module Homesick
 
       def rm(file)
         say_status "rm #{file}", '', :green
-        FileUtils.rm file, force: true
+        FileUtils.rm file, force: true unless options[:pretend]
       end
 
       def rm_r(dir)
         say_status "rm -r #{dir}", '', :green
-        FileUtils.rm_r dir
+        FileUtils.rm_r dir unless options[:pretend]
       end
 
       def ln_s(source, destination)
