@@ -16,6 +16,16 @@ To get started, install homesick first:
 
     gem install homesick
 
+If you're starting from scratch and don't have a castle yet, generate one:
+
+    homesick generate ~/.homesick/repos/my-dotfiles
+
+This creates a new git repository with a `home/` directory ready for your dotfiles. If you have a `github.user` set in your git config, it will also add a GitHub remote automatically. You can then track files into it:
+
+    homesick track ~/.vimrc my-dotfiles
+
+Otherwise, if you already have a castle hosted somewhere, clone it:
+
 Next, you use the homesick command to clone a castle:
 
     homesick clone git://github.com/technicalpickles/pickled-vim.git
