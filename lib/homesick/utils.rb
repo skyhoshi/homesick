@@ -207,17 +207,18 @@ module Homesick
       absolute_basedir = Pathname.new(basedir).expand_path
       castle_home = castle_dir(castle)
       inside basedir do |destination_root|
-        FileUtils.cd(destination_root) unless destination_root == FileUtils.pwd
-        files = Pathname.glob('*', File::FNM_DOTMATCH)
-                        .reject { |a| ['.', '..'].include?(a.to_s) }
-                        .reject { |path| matches_ignored_dir? castle_home, path.expand_path, subdirs }
-        files.each do |path|
-          absolute_path = path.expand_path
+        FileUtils.cd(destination_root) do
+          files = Pathname.glob('*', File::FNM_DOTMATCH)
+                          .reject { |a| ['.', '..'].include?(a.to_s) }
+                          .reject { |path| matches_ignored_dir? castle_home, path.expand_path, subdirs }
+          files.each do |path|
+            absolute_path = path.expand_path
 
-          relative_dir = absolute_basedir.relative_path_from(castle_home)
-          home_path = home_dir.join(relative_dir).join(path)
+            relative_dir = absolute_basedir.relative_path_from(castle_home)
+            home_path = home_dir.join(relative_dir).join(path)
 
-          yield(absolute_path, home_path)
+            yield(absolute_path, home_path)
+          end
         end
       end
     end

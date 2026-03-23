@@ -738,6 +738,48 @@ describe Homesick::CLI do
 
       expect(castle).not_to be_exist
     end
+
+    context 'pretend' do
+      it 'does not remove symlink files' do
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
+        given_castle('stronghold')
+        some_rc_file = home.file '.some_rc_file'
+        homesick.track(some_rc_file.to_s, 'stronghold')
+        Capture.stdout { homesick.invoke 'destroy', ['stronghold'], pretend: true }
+        expect(home.join('.some_rc_file')).to be_exist
+      end
+
+      it 'does not delete the cloned repository' do
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
+        given_castle('stronghold')
+        some_rc_file = home.file '.some_rc_file'
+        homesick.track(some_rc_file.to_s, 'stronghold')
+        Capture.stdout { homesick.invoke 'destroy', ['stronghold'], pretend: true }
+        expect(castles.join('stronghold')).to be_exist
+      end
+    end
+  end
+
+  describe 'file actions' do
+    context 'pretend' do
+      describe '#rm' do
+        it 'does not remove the file' do
+          test_file = home.file('test_file')
+          allow(homesick).to receive(:options).and_return(pretend: true)
+          expect(FileUtils).not_to receive(:rm)
+          homesick.send(:rm, test_file)
+        end
+      end
+
+      describe '#rm_r' do
+        it 'does not remove the directory' do
+          test_dir = home.directory('test_dir')
+          allow(homesick).to receive(:options).and_return(pretend: true)
+          homesick.send(:rm_r, test_dir)
+          expect(test_dir).to be_exist
+        end
+      end
+    end
   end
 
   describe 'cd' do
